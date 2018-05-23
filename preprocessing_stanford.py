@@ -1,5 +1,8 @@
 import numpy as np
 import pandas as pd
+import string
+import nltk
+from nltk.corpus import stopwords
 
 def convertToNpArray(train,test):
     """
@@ -31,10 +34,28 @@ def convertToNpArray(train,test):
 
     return train_data_array,train_target_array,test_data_array,test_target_array
 
+def remove_punc(data_array):
+    translator = str.maketrans(string.punctuation, len(string.punctuation)*' ')
+    for i in range(len(data_array)):
+        data_array[i][0] = data_array[i][0].translate(translator)
+    return data_array
+#end
+
+def remove_stopwords(data_array):
+    print()
+#end
 
 if __name__=="__main__":
     train_data_array, train_target_array, test_data_array,test_target_array=convertToNpArray\
         ('data/training.1600000.processed.noemoticon.csv','data/testdata.manual.2009.06.14.csv')
+    #Remove punctuations from train and test
+    train_data_array = remove_punc(train_data_array)
+    test_data_array = remove_punc(test_data_array)
+
+    #Remove stop words
+    train_data_array = remove_stopwords(train_data_array)
+
+    print(train_data_array)
     print(np.shape(train_data_array))
     print(np.shape(train_target_array))
     print(np.shape(test_data_array))
