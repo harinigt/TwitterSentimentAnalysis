@@ -1,8 +1,9 @@
 import numpy as np
 import pandas as pd
 import string
-import nltk
-from nltk.corpus import stopwords
+import operator
+
+global_dict = {}
 
 def convertToNpArray(train,test):
     """
@@ -35,28 +36,86 @@ def convertToNpArray(train,test):
     return train_data_array,train_target_array,test_data_array,test_target_array
 
 def remove_punc(data_array):
+    """
+    
+    :param data_array:
+    :return:
+    """
     translator = str.maketrans(string.punctuation, len(string.punctuation)*' ')
     for i in range(len(data_array)):
         data_array[i][0] = data_array[i][0].translate(translator)
     return data_array
 #end
 
-def remove_stopwords(data_array):
-    print()
+def remove_stopwords(data_array,stopwords_file_path):
+    """
+
+    :param data_array:
+    :param stopwords_file_path:
+    :return:
+    """
+    stopwords = open(stopwords_file_path,'r')
+    stopwords_list = stopwords.read().split('\n')
+    for i in range(len(data_array)):
+        tweet_tokenized = data_array[i][0].split(' ')
+        tweet_tokenized = [word.lower() for word in tweet_tokenized]
+        for word in tweet_tokenized:
+            if word in stopwords_list:
+                tweet_tokenized.remove(word)
+        data_array[i][0] = ' '.join(tweet_tokenized)
+    return data_array
+
+
 #end
 
+
+def build_global_vocab(data_array):
+    """
+
+    :param data_array:
+    :return:
+    """
+    global features
+    for i in range(len(data_array)):
+        tweet_tokenized = data_array[i][0].split(' ')
+        for word in tweet_tokenized:
+            if word in global_dict.keys():
+                global_dict[word] +=1
+            else:
+                global_dict[word] = 1
+    global_dict.pop('')
+    # print(global_dict)
+    features = dict(sorted(global_dict.items(), key=operator.itemgetter(1),reverse=True)[:2000])
+
+
 if __name__=="__main__":
+    global features
+
     train_data_array, train_target_array, test_data_array,test_target_array=convertToNpArray\
         ('data/training.1600000.processed.noemoticon.csv','data/testdata.manual.2009.06.14.csv')
-    #Remove punctuations from train and test
+
+    #Round 1 - Remove stop words
+    train_data_array = remove_stopwords(train_data_array, 'stopwords.txt')
+    test_data_array = remove_stopwords(test_data_array, 'stopwords.txt')
+
+    # Remove punctuations from train and test
     train_data_array = remove_punc(train_data_array)
     test_data_array = remove_punc(test_data_array)
 
-    #Remove stop words
-    train_data_array = remove_stopwords(train_data_array)
+    # Round 2 - Remove stop words
+    train_data_array = remove_stopwords(train_data_array, 'stopwords.txt')
+    test_data_array = remove_stopwords(test_data_array, 'stopwords.txt')
 
-    print(train_data_array)
-    print(np.shape(train_data_array))
-    print(np.shape(train_target_array))
-    print(np.shape(test_data_array))
-    print(np.shape(test_target_array))
+    #Build top 2000 words from training data array
+    build_global_vocab(train_data_array)
+
+    # print(global_dict)
+    # print(features)
+    # test_data_array = remove_stopwords(test_data_array, 'stopwords.txt')
+    # print(train_data_array)
+    # print(np.shape(train_data_array))
+    # print(np.shape(train_target_array))
+    # print(np.shape(test_data_array))
+    # print(np.shape(test_target_array))
+    # remove_punc(train_data_array)
+    # print(test_data_array)
