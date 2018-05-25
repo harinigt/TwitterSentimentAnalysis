@@ -37,7 +37,7 @@ def convertToNpArray(train,test):
 
 def remove_punc(data_array):
     """
-    
+
     :param data_array:
     :return:
     """
@@ -84,9 +84,21 @@ def build_global_vocab(data_array):
             else:
                 global_dict[word] = 1
     global_dict.pop('')
-    # print(global_dict)
     features = dict(sorted(global_dict.items(), key=operator.itemgetter(1),reverse=True)[:2000])
 
+
+
+def encodeDataArray(data_array):
+    global features
+    top_2000_word_list = list(features.keys())
+    encoded_array = np.empty((len(data_array),len(top_2000_word_list)))
+    for i in range(len(data_array)):
+        for j in range(len(top_2000_word_list)):
+            if top_2000_word_list[j] in data_array[i][0]:
+                encoded_array[i][j] = 1
+            else:
+                encoded_array[i][j] = 0
+    return encoded_array
 
 if __name__=="__main__":
     global features
@@ -108,6 +120,16 @@ if __name__=="__main__":
 
     #Build top 2000 words from training data array
     build_global_vocab(train_data_array)
+
+    #Encode the training and test data
+    train_encoded_array = encodeDataArray(train_data_array)
+    test_encoded_array = encodeDataArray(test_data_array)
+
+    np.save('data/train_encoded_array.npy',train_encoded_array)
+    np.save('data/test_encoded_array.npy', test_encoded_array)
+
+
+    # print(test_encoded_array)
 
     # print(global_dict)
     # print(features)
