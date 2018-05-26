@@ -15,11 +15,12 @@ def convertToNpArray(train,test):
     train_data = pd.read_csv(train,delimiter=',', quotechar='"',
                              dtype=None,encoding = "ISO-8859-1",
                              usecols=[0,5])
-    train_target = train_data.iloc[:,0]
-    train_target_array = np.array(train_target)
+    train_data = create_train_data_subset(train_data)
+    train_target_array = train_data[:,0]
+    # train_target_array = np.array(train_target)
     train_target_array = np.reshape(train_target_array,(len(train_target_array),1))
-    train_data = train_data.iloc[:,1]
-    train_data_array = np.array(train_data)
+    train_data_array = train_data[:,1]
+    # train_data_array = np.array(train_data)
     train_data_array = np.reshape(train_data_array,(len(train_data_array),1))
 
     test_data = pd.read_csv(test,delimiter=',', quotechar='"',
@@ -34,6 +35,12 @@ def convertToNpArray(train,test):
     test_data_array = np.reshape(test_data, (len(test_data), 1))
 
     return train_data_array,train_target_array,test_data_array,test_target_array
+
+def create_train_data_subset(train_data):
+    train_data_numpy_array = np.array(train_data)
+    train_data_final = train_data_numpy_array[750000:850000,:]
+    return train_data_final
+
 
 def remove_punc(data_array):
     """
@@ -69,15 +76,16 @@ def remove_stopwords(data_array,stopwords_file_path):
 #end
 
 
-def build_global_vocab(data_array):
+def build_global_vocab():
     """
 
-    :param data_array:
+    :param train_data_array:
     :return:
     """
     global features
-    for i in range(len(data_array)):
-        tweet_tokenized = data_array[i][0].split(' ')
+    global train_data_array
+    for i in range(len(train_data_array)):
+        tweet_tokenized = train_data_array[i][0].split(' ')
         for word in tweet_tokenized:
             if word in global_dict.keys():
                 global_dict[word] +=1
@@ -86,30 +94,51 @@ def build_global_vocab(data_array):
     global_dict.pop('')
     features = dict(sorted(global_dict.items(), key=operator.itemgetter(1),reverse=True)[:2000])
 
-
-
-def encodeDataArray(data_array):
+def encodeDataArray():
     global features
+    global test_data_array
+    global test_encoded_array
+
     top_2000_word_list = list(features.keys())
-    encoded_array = np.empty((len(data_array),len(top_2000_word_list)))
-    for i in range(len(data_array)):
+    test_encoded_array = np.empty((len(test_data_array),len(top_2000_word_list)))
+    for i in range(len(test_data_array)):
+        # encoded_array = np.append(encoded_array,(1,1))
         for j in range(len(top_2000_word_list)):
-            if top_2000_word_list[j] in data_array[i][0]:
-                encoded_array[i][j] = 1
+            if top_2000_word_list[j] in test_data_array[i][0]:
+                test_encoded_array[i][j] = 1
             else:
-                encoded_array[i][j] = 0
-    return encoded_array
+                test_encoded_array[i][j] = 0
+    return test_encoded_array
+
+def encodeTrainDataArray():
+    global features
+    global train_data_array
+    global train_encoded_array
+    training_length = len(train_data_array)
+    top_2000_word_list = list(features.keys())
+    word_list_length = len(top_2000_word_list)
+    train_encoded_array = np.zeros((training_length,word_list_length))
+    for i in range(training_length):
+        # encoded_array = np.append(encoded_array,(1,1))
+        for j in range(word_list_length):
+            if top_2000_word_list[j] in train_data_array[i][0]:
+                train_encoded_array[i][j] = 1
+
 
 if __name__=="__main__":
     global features
+    global train_data_array
+    global test_data_array
+    global test_encoded_array
+    global train_encoded_array
+    # np.set_printoptions(suppress=True)
 
-    train_data_array, train_target_array, test_data_array,test_target_array=convertToNpArray\
-        ('data/training.1600000.processed.noemoticon.csv','data/testdata.manual.2009.06.14.csv')
-
+    train_data_array, train_target_array, test_data_array,test_target_array=convertToNpArray('data/training.1600000.processed.noemoticon.csv','data/testdata.manual.2009.06.14.csv')
+    np.save('data/train_target_array', train_target_array)
+    np.save('data/test_target_array', test_target_array)
     #Round 1 - Remove stop words
     train_data_array = remove_stopwords(train_data_array, 'stopwords.txt')
     test_data_array = remove_stopwords(test_data_array, 'stopwords.txt')
-
     # Remove punctuations from train and test
     train_data_array = remove_punc(train_data_array)
     test_data_array = remove_punc(test_data_array)
@@ -119,14 +148,20 @@ if __name__=="__main__":
     test_data_array = remove_stopwords(test_data_array, 'stopwords.txt')
 
     #Build top 2000 words from training data array
-    build_global_vocab(train_data_array)
+    build_global_vocab()
 
     #Encode the training and test data
-    train_encoded_array = encodeDataArray(train_data_array)
-    test_encoded_array = encodeDataArray(test_data_array)
+    # train_encoded_array = encodeDataArray(train_data_array)
+    # test_encoded_array = encodeDataArray()
+    # print(np.sum(test_encoded_array))
+    encodeDataArray()
+    encodeTrainDataArray()
 
-    np.save('data/train_encoded_array.npy',train_encoded_array)
-    np.save('data/test_encoded_array.npy', test_encoded_array)
+
+    # np.save('data/train_encoded_array.npy',train_encoded_array)
+    np.save('data/train_encoded_array', train_encoded_array)
+    np.save('data/test_encoded_array', test_encoded_array)
+
 
 
     # print(test_encoded_array)
