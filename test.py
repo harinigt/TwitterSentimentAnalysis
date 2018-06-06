@@ -6,7 +6,7 @@ from sklearn.decomposition import PCA
 
 
 if __name__=="__main__":
-    X=np.load('data/train_encoded_array.npy')
+    X = np.load('data/train_encoded_array.npy')
     Y = np.load('data/train_target_array.npy')
     Y = Y.astype('int')
     Y = Y.flatten()
