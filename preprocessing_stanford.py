@@ -15,19 +15,20 @@ def convertToNpArray(train,test):
     train_data = pd.read_csv(train,delimiter=',', quotechar='"',
                              dtype=None,encoding = "ISO-8859-1",
                              usecols=[0,5])
-    train_data = create_train_data_subset(train_data)
-    train_target_array = train_data[:,0]
-    # train_target_array = np.array(train_target)
+    train_array = create_train_data_subset(train_data)
+    np.random.shuffle(train_array)
+    # print(np.shape(train_array))
+    train_target_array = train_array[:,0]
     train_target_array = np.reshape(train_target_array,(len(train_target_array),1))
-    train_data_array = train_data[:,1]
-    # train_data_array = np.array(train_data)
+    train_data_array = train_array[:,1]
     train_data_array = np.reshape(train_data_array,(len(train_data_array),1))
-
     test_data = pd.read_csv(test,delimiter=',', quotechar='"',
                              dtype=None,encoding = "ISO-8859-1",
                             usecols=[0,5], names=['label','tweet'])
     test_data = test_data[test_data.label != 2]
     test_data = test_data.values
+    test_data = np.append(test_data,create_test_data_subset(train_data),axis=0)
+    np.random.shuffle(test_data)
     test_target = test_data[:,0]
     test_target_array = np.array(test_target)
     test_target_array = np.reshape(test_target_array, (len(test_target_array), 1))
@@ -40,6 +41,14 @@ def create_train_data_subset(train_data):
     train_data_numpy_array = np.array(train_data)
     train_data_final = train_data_numpy_array[750000:850000,:]
     return train_data_final
+
+def create_test_data_subset(train_data):
+    train_data_numpy_array = np.array(train_data)
+    test_data_final = train_data_numpy_array[0:10000, :]
+
+    test_data_final = np.append(test_data_final,train_data_numpy_array[900000:910000,:],axis=0)
+    # print(np.shape(test_data_final))
+    return test_data_final
 
 
 def remove_punc(data_array):
@@ -134,8 +143,8 @@ if __name__=="__main__":
     # np.set_printoptions(suppress=True)
 
     train_data_array, train_target_array, test_data_array,test_target_array=convertToNpArray('data/training.1600000.processed.noemoticon.csv','data/testdata.manual.2009.06.14.csv')
-    np.save('data/train_target_array', train_target_array)
-    np.save('data/test_target_array', test_target_array)
+    np.save('data/train_target_array_new', train_target_array)
+    np.save('data/test_target_array_new', test_target_array)
     #Round 1 - Remove stop words
     train_data_array = remove_stopwords(train_data_array, 'stopwords.txt')
     test_data_array = remove_stopwords(test_data_array, 'stopwords.txt')
@@ -159,8 +168,8 @@ if __name__=="__main__":
 
 
     # np.save('data/train_encoded_array.npy',train_encoded_array)
-    np.save('data/train_encoded_array', train_encoded_array)
-    np.save('data/test_encoded_array', test_encoded_array)
+    np.save('data/train_encoded_array_new', train_encoded_array)
+    np.save('data/test_encoded_array_new', test_encoded_array)
 
 
 

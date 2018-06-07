@@ -14,12 +14,12 @@ def predict_nn(x,y,z,clf):
 if __name__ == "__main__":
     startTime = datetime.datetime.now()
     x = np.load('data/train_encoded_array.npy')
-    x[np.where(x==0)] = 0.01
+    x[np.where(x==0)] = 0.001
     y = np.load('data/train_target_array.npy')
     y = y.astype('int')
     y = y.flatten()
     z = np.load('data/test_encoded_array.npy')
-    z[np.where(z==0)] = 0.01
+    z[np.where(z==0)] = 0.001
     t = np.load('data/test_target_array.npy')
     t = t.astype('int')
     t = t.flatten()
