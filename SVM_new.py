@@ -28,6 +28,8 @@ if __name__ == "__main__":
 
     # Replace 0s with 0.001s
     t[np.where(t==0)] = 0.001
+    y[np.where(t==0)] = 0.001
+
 
     # Predict using SVM
     clf = svm.SVC()
@@ -50,13 +52,6 @@ if __name__ == "__main__":
     confusion_matrix = metrics.confusion_matrix(t, p)
     print("Confusion Matrix:\n", confusion_matrix)
 
-    # Plotting decision regions
-    plot_decision_regions(z, p, clf=clf, legend=2)
-    plt.xlabel('X0')
-    plt.ylabel('X1')
-    plt.title('SVM with 2000 features (classes: 0.001|4)')
-    plt.show()
-    plt.savefig('data/svm2000d_decisionRegions')
 
     # Replace 4s with 1s and 0.001s with 0s to plot precision-recall curve
     # (only accepts binary values)
@@ -75,10 +70,25 @@ if __name__ == "__main__":
     plt.xlim([0.0, 1.0])
     average_precision = average_precision_score(t, p)
     plt.title('SVM (2000d, classes: 0.001|4) Precision-Recall curve: AP={0:0.2f}'.format(average_precision))
+    plt.savefig('data/svm2000d_precisionRecall.png')
     plt.show()
-    plt.savefig('data/svm2000d_precisionRecall')
 
 
+    # Revert to 0.001s and 4s to plot decision-regions (since plots display class names)
+    y[np.where(y==1)] = 4
+    # p[np.where(p==1)] = 4
+    y[np.where(y==0)] = 0.001
+    # p[np.where(p==0)] = 0.001
+
+    # Reduce to 2 dimensions and plot decision regions
+    pca = PCA(n_components=2).fit(x)
+    x = pca.transform(x)
+    plot_decision_regions(x, y, clf=clf, legend=2)
+    plt.xlabel('X0')
+    plt.ylabel('X1')
+    plt.title('SVM with 2000 features (classes: 0.001|4)')
+    plt.savefig('data/svm2000d_decisionRegions.png')
+    plt.show()
 
 
 
