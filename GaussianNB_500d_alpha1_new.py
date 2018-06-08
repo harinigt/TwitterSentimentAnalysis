@@ -22,7 +22,7 @@ if __name__ == "__main__":
     t = t.flatten()
 
     #Predict using Naive Bayes Model
-    clf = GaussianNB(alpha=1)
+    clf = GaussianNB()
     nmf = NMF(n_components=500, init='random', random_state=0)
     x_500d = nmf.fit_transform(x)
     z_500d = nmf.transform(z)
