@@ -31,6 +31,9 @@ if __name__ == "__main__":
     x_200d = pca.transform(x)
     z_200d = pca.transform(z)
 
+    # Replace 0s with 0.001s
+    t[np.where(t==0)] = 0.001
+
     # Predict using SVM
     clf = svm.SVC()
     clf.fit(x_200d, y)
@@ -42,7 +45,7 @@ if __name__ == "__main__":
     print("\n")
 
 
-    print("SVM with Dimensionality Reduction using PCA down to 200 features")
+    print("SVM with Dimensionality Reduction using PCA down to 200 features (classes: 0.001|4)")
 
     # Compute accuracy
     accuracy = metrics.accuracy_score(t, p, normalize=False)
@@ -56,13 +59,16 @@ if __name__ == "__main__":
     plot_decision_regions(z, p, clf=clf, legend=2)
     plt.xlabel('X0')
     plt.ylabel('X1')
-    plt.title('SVM with Dimensionality Reduction using PCA down to 200 features')
+    plt.title('SVM with Dimensionality Reduction using PCA down to 200 features (classes: 0.001|4)')
     plt.show()
     plt.savefig('data/svm200d_decisionRegions')
 
-    # Replace 4s with 1s
+    # Replace 4s with 1s and 0.001s with 0s to plot precision-recall curve
+    # (only accepts binary values)
     t[np.where(t==4)] = 1
     p[np.where(p==4)] = 1
+    t[np.where(t==0.001)] = 0
+    p[np.where(p==0.001)] = 0
 
     # Plot the Precision-Recall curve
     precision, recall, _ = precision_recall_curve(t, p)
@@ -73,7 +79,7 @@ if __name__ == "__main__":
     plt.ylim([0.0, 1.05])
     plt.xlim([0.0, 1.0])
     average_precision = average_precision_score(t, p)
-    plt.title('SVM (200d) Precision-Recall curve: AP={0:0.2f}'.format(average_precision))
+    plt.title('SVM (200d, classes: 0.001|4) Precision-Recall curve: AP={0:0.2f}'.format(average_precision))
     plt.show()
     plt.savefig('data/svm200d_precisionRecall')
 
