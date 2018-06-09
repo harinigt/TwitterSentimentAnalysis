@@ -1,11 +1,8 @@
 from sklearn import svm,metrics
 import numpy as np
-import matplotlib as plt
+import matplotlib.pyplot as plt
 from sklearn.decomposition import PCA
 import datetime
-
-from mlxtend.plotting import plot_decision_regions
-
 from sklearn.metrics import precision_recall_curve
 from sklearn.metrics import average_precision_score
 
@@ -32,8 +29,8 @@ if __name__ == "__main__":
     z_200d = pca.transform(z)
 
     # Replace 0s with 0.001s
-    y[np.where(t==0)] = 0.001
-    t[np.where(t==0)] = 0.001
+    x[np.where(x==0)] = 0.001
+    z[np.where(z==0)] = 0.001
 
     # Predict using SVM
     clf = svm.SVC()
@@ -57,12 +54,10 @@ if __name__ == "__main__":
     print("Confusion Matrix:\n", confusion_matrix)
 
 
-    # Replace 4s with 1s and 0.001s with 0s to plot precision-recall curve
+    # Replace 4s with 1s to plot precision-recall curve
     # (only accepts binary values)
     t[np.where(t==4)] = 1
     p[np.where(p==4)] = 1
-    t[np.where(t==0.001)] = 0
-    p[np.where(p==0.001)] = 0
 
     # Plot the Precision-Recall curve
     precision, recall, _ = precision_recall_curve(t, p)
@@ -77,19 +72,3 @@ if __name__ == "__main__":
     plt.savefig('data/svm200d_precisionRecall.png')
     plt.show()
 
-
-    # Revert to 0.001s and 4s to plot decision-regions (since plots display class names)
-    y[np.where(y==1)] = 4
-    # p[np.where(p==1)] = 4
-    y[np.where(y==0)] = 0.001
-    # p[np.where(p==0)] = 0.001
-
-    # Reduce to 2 dimensions and plot decision regions
-    pca = PCA(n_components=2).fit(x)
-    x = pca.transform(x)
-    plot_decision_regions(x, y, clf=clf, legend=2)
-    plt.xlabel('X0')
-    plt.ylabel('X1')
-    plt.title('SVM with Dimensionality Reduction using PCA down to 200 features (classes: 0.001|4)')
-    plt.savefig('data/svm200d_decisionRegions.png')
-    plt.show()

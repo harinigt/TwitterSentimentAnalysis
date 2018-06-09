@@ -1,11 +1,7 @@
 from sklearn import svm,metrics
 import numpy as np
-import matplotlib as plt
-from sklearn.decomposition import PCA
+import matplotlib.pyplot as plt
 import datetime
-
-from mlxtend.plotting import plot_decision_regions
-
 from sklearn.metrics import precision_recall_curve
 from sklearn.metrics import average_precision_score
 
@@ -65,20 +61,6 @@ if __name__ == "__main__":
     plt.savefig('data/svm2000d_with0s_precisionRecall.png')
     plt.show()
 
-
-    # Revert to 4s to plot decision-regions (since plots display class names)
-    y[np.where(y==1)] = 4
-    # p[np.where(p==1)] = 4
-
-    # Reduce to 2 dimensions and plot decision regions
-    pca = PCA(n_components=2).fit(x)
-    x = pca.transform(x)
-    plot_decision_regions(x, y, clf=clf, legend=2)
-    plt.xlabel('X0')
-    plt.ylabel('X1')
-    plt.title('SVM with 2000 features (classes: 0|4)')
-    plt.savefig('data/svm2000d_with0s_decisionRegions.png')
-    plt.show()
 
 
 

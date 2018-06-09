@@ -1,5 +1,5 @@
 import numpy as np
-from sklearn.naive_bayes import GaussianNB
+from sklearn.naive_bayes import BernoulliNB
 from sklearn import metrics
 from sklearn.decomposition import NMF
 import datetime
@@ -22,7 +22,7 @@ if __name__ == "__main__":
     t = t.flatten()
 
     #Predict using Naive Bayes Model
-    clf = GaussianNB()
+    clf = BernoulliNB(alpha=1)
     nmf = NMF(n_components=500, init='random', random_state=0)
     x_500d = nmf.fit_transform(x)
     z_500d = nmf.transform(z)
@@ -34,7 +34,7 @@ if __name__ == "__main__":
     print("Total time taken to train: ", endTime)
     print("\n")
 
-    print("Gaussian Naive Bayes with 500 features and alpha = 1")
+    print("Bernoulli Naive Bayes with 500 features and alpha = 1")
 
     # Compute accuracy
     accuracy = metrics.accuracy_score(t, p, normalize=False)
@@ -49,7 +49,8 @@ if __name__ == "__main__":
     p[np.where(p == 4)] = 1
 
     # Plot the Precision-Recall curve
-    precision, recall, _ = metrics.precision_recall_curve(t, p)
+    y_scores = clf.predict_proba(z_500d)
+    precision, recall, _ = metrics.precision_recall_curve(t, y_scores[:,1])
     plt.step(recall, precision, color='b', alpha=0.2, where='post')
     plt.fill_between(recall, precision, step='post', alpha=0.2, color='b')
     plt.xlabel('Recall')
@@ -57,6 +58,6 @@ if __name__ == "__main__":
     plt.ylim([0.0, 1.05])
     plt.xlim([0.0, 1.0])
     average_precision = metrics.average_precision_score(t, p)
-    plt.title('Gaussian NB 500d Precision-Recall curve: AP={0:0.2f}'.format(average_precision))
-    plt.savefig('data/GaussianNB500d_alpha1_precisionRecall.png')
+    plt.title('Bernoulli NB 500d Precision-Recall curve: AP={0:0.2f}'.format(average_precision))
+    plt.savefig('data/BernoulliNB500d_alpha1_precisionRecall.png')
     plt.show()
