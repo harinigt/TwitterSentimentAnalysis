@@ -16,19 +16,19 @@ def predict_nn(x,y,z,clf):
 
 if __name__ == "__main__":
     startTime = datetime.datetime.now()
-    x = np.load('data/UpdatedFiles/train_encoded_array_new.npy')
+    x = np.load('data/train_encoded_array_new.npy')
     x[np.where(x==0)] = 0.001
-    y = np.load('data/UpdatedFiles/train_target_array_new.npy')
+    y = np.load('data/train_target_array_new.npy')
     y = y.astype('int')
     y = y.flatten()
-    z = np.load('data/UpdatedFiles/test_encoded_array_new.npy')
+    z = np.load('data/test_encoded_array_new.npy')
     z[np.where(z==0)] = 0.001
-    t = np.load('data/UpdatedFiles/test_target_array_new.npy')
+    t = np.load('data/test_target_array_new.npy')
     t = t.astype('int')
     t = t.flatten()
-    learningRate =[0.1, 0.01, 0.001]
+    learningRate =[0.1]
     for lr in learningRate:
-        clf = MLPClassifier(solver='sgd', hidden_layer_sizes=(4, ), random_state=1, batch_size='auto', learning_rate='constant', learning_rate_init=lr)
+        clf = MLPClassifier(solver='sgd', hidden_layer_sizes=(5, ), batch_size='auto', learning_rate='adaptive', learning_rate_init=lr, early_stopping=True)
         clf.fit(x, y)
         predicted = predict_nn(x,y,z,clf)
         print("For learning rate: ", lr)
@@ -36,6 +36,7 @@ if __name__ == "__main__":
     
         # Compute accuracy
         accuracy = metrics.accuracy_score(t, predicted, normalize=False)
+        print("Classified %s correctly", accuracy)
         print("Accuracy: ", (accuracy/len(t)) * 100)
         
         # Confusion matrix
