@@ -21,13 +21,13 @@ if __name__ == "__main__":
     t = t.astype('int')
     t = t.flatten()
 
-    #Predict using Naive Bayes Model
+    # Predict using Naive Bayes Model
     clf = BernoulliNB(alpha=1)
-    nmf = NMF(n_components=500, init='random', random_state=0)
-    x_500d = nmf.fit_transform(x)
-    z_500d = nmf.transform(z)
-    clf.fit(x_500d, y)
-    p = clf.predict(z_500d)
+    # nmf = NMF(n_components=500, init='random', random_state=0)
+    # x_500d = nmf.fit_transform(x)
+    # z_500d = nmf.transform(z)
+    clf.fit(x, y)
+    p = clf.predict(z)
 
     # Compute training time
     endTime = datetime.datetime.now() - startTime
@@ -49,7 +49,7 @@ if __name__ == "__main__":
     p[np.where(p == 4)] = 1
 
     # Plot the Precision-Recall curve
-    y_scores = clf.predict_proba(z_500d)
+    y_scores = clf.predict_proba(z)
     precision, recall, _ = metrics.precision_recall_curve(t, y_scores[:,1])
     plt.step(recall, precision, color='b', alpha=0.2, where='post')
     plt.fill_between(recall, precision, step='post', alpha=0.2, color='b')
