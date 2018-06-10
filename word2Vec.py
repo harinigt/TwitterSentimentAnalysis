@@ -94,7 +94,7 @@ def buildWordVector(tokens, size):
 
 if __name__=="__main__":
     start_time = datetime.datetime.now()
-    
+
     # define training data
     train_data_array, test_data_array, train_target_array, test_target_array = convertToNpArray('data/training.1600000.processed.noemoticon.csv',
                                                                                                 'data/testdata.manual.2009.06.14.csv')
@@ -120,6 +120,7 @@ if __name__=="__main__":
             item = str(item).split(' ')
             test_tweets.append(item)
 
+
     # # Train word2vec model
     # model = Word2Vec(train_tweets, min_count=1)
     # words = list(model.wv.vocab)
@@ -135,8 +136,10 @@ if __name__=="__main__":
     matrix = vectorizer.fit_transform([x for x in train_tweets])
     tfidf = dict(zip(vectorizer.get_feature_names(), vectorizer.idf_))
 
+
+
     #Generating the training tweet average array where each row represents a tweet in the training data
-    train_tweet_average = np.empty((100000, 100))
+    train_tweet_average = np.empty((0, 100))
     for tweet in train_tweets:
         train_tweet_average = np.append(train_tweet_average, buildWordVector(tweet, 100), axis=0)
     train_tweet_average = scale(train_tweet_average)
@@ -147,7 +150,7 @@ if __name__=="__main__":
     print("Saved Train data array")
 
     # Generating the test tweet average array where each row represents a tweet in the test data
-    test_tweet_average = np.empty((20000, 100))
+    test_tweet_average = np.empty((0, 100))
     for tweet in test_tweets:
         test_tweet_average = np.append(test_tweet_average, buildWordVector(tweet, 100), axis=0)
     test_tweet_average = scale(test_tweet_average)
