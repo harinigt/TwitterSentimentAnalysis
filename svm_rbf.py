@@ -1,4 +1,4 @@
-from sklearn import svm,metrics
+    from sklearn import svm,metrics
 import numpy as np
 import matplotlib as plt
 from sklearn.decomposition import PCA
@@ -56,16 +56,19 @@ if __name__ == "__main__":
     t = np.load('data/test_target_array.npy')
     t = t.astype('int')
     t = t.flatten()
-    clf = svm.SVC(kernel='rbf', gamma=0.0001, C=1e3)
-    pca = PCA(n_components=200).fit(x)
-    x_200d = pca.transform(x)
-    z_200d = pca.transform(z)
-    predicted = predict_svm(x_200d,y,z_200d,clf)
-    accuracy = metrics.accuracy_score(t, predicted, normalize=False)
-    confusion_matrix = metrics.confusion_matrix(t, predicted)
-    # print(np.shape(predicted))
-    print("Accuracy Score: ",accuracy)
-    print("Confusion Matrix:\n",confusion_matrix)
+    param_grid = {'C': [1e3, 5e3, 1e4, 5e4, 1e5], 'GAMMA': [0.0001, 0.0005, 0.001, 0.005, 0.01, 0.1]}
+    
+    for c, gamma in zip(param_grid['C'], param_grid['GAMMA']):
+        clf = svm.SVC(kernel='rbf', gamma=gamma, C=c)
+        pca = PCA(n_components=200).fit(x)
+        x_200d = pca.transform(x)
+        z_200d = pca.transform(z)
+        predicted = predict_svm(x_200d,y,z_200d,clf)
+        accuracy = metrics.accuracy_score(t, predicted, normalize=False)
+        confusion_matrix = metrics.confusion_matrix(t, predicted)
+        print("for c ", c, " & gamma", gamma, ":")
+        print("Accuracy Score: ",accuracy)
+        print("Confusion Matrix:\n",confusion_matrix)
     endTime = datetime.datetime.now()- startTime
     print("Total time taken to train: ",endTime)
 

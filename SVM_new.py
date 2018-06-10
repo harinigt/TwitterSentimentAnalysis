@@ -53,9 +53,17 @@ if __name__ == "__main__":
     # (only accepts binary values)
     t[np.where(t==4)] = 1
     p[np.where(p==4)] = 1
+<<<<<<< Updated upstream
+=======
+    #t[np.where(t==0.001)] = 0
+    #p[np.where(p==0.001)] = 0
+    
+    y_scores = clf.decision_function(z)
+>>>>>>> Stashed changes
 
     # Plot the Precision-Recall curve
-    precision, recall, _ = precision_recall_curve(t, p)
+    precision, recall, _ = precision_recall_curve(t, y_scores)
+    plt.figure()
     plt.step(recall, precision, color='b', alpha=0.2, where='post')
     plt.fill_between(recall, precision, step='post', alpha=0.2, color='b')
     plt.xlabel('Recall')
@@ -68,6 +76,25 @@ if __name__ == "__main__":
     plt.show()
 
 
+<<<<<<< Updated upstream
+=======
+#    # Revert to 0.001s and 4s to plot decision-regions (since plots display class names)
+#    y[np.where(y==1)] = 4
+#    # p[np.where(p==1)] = 4
+#    y[np.where(y==0)] = 0.001
+#    # p[np.where(p==0)] = 0.001
+#
+#    # Reduce to 2 dimensions and plot decision regions
+#    pca = PCA(n_components=2).fit(x)
+#    x = pca.transform(x)
+#    plot_decision_regions(x, y, clf=clf, legend=2)
+#    plt.xlabel('X0')
+#    plt.ylabel('X1')
+#    plt.title('SVM with 2000 features (classes: 0.001|4)')
+#    plt.savefig('data/svm2000d_decisionRegions.png')
+#    plt.show()
+
+>>>>>>> Stashed changes
 
 
 

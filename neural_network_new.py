@@ -26,9 +26,9 @@ if __name__ == "__main__":
     t = np.load('data/test_target_array_new.npy')
     t = t.astype('int')
     t = t.flatten()
-    learningRate =[0.1]
+    learningRate =[0.01]
     for lr in learningRate:
-        clf = MLPClassifier(solver='sgd', hidden_layer_sizes=(5, ), batch_size='auto', learning_rate='adaptive', learning_rate_init=lr, early_stopping=True)
+        clf = MLPClassifier(solver='sgd', hidden_layer_sizes=(40,20), batch_size='auto', learning_rate='adaptive', learning_rate_init=lr, early_stopping=True)
         clf.fit(x, y)
         predicted = predict_nn(x,y,z,clf)
         print("For learning rate: ", lr)
@@ -47,8 +47,10 @@ if __name__ == "__main__":
         t[np.where(t==4)] = 1
         predicted[np.where(predicted==4)] = 1
         
+        y_scores = clf.predict_proba(z)
+        
         # Plot the Precision-Recall curve
-        precision, recall, _ = precision_recall_curve(t, predicted)
+        precision, recall, _ = precision_recall_curve(t, y_scores[:,1])
         plt.figure()
         plt.step(recall, precision, color='b', alpha=0.2, where='post')
         plt.fill_between(recall, precision, step='post', alpha=0.2, color='b')
