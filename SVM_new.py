@@ -53,13 +53,12 @@ if __name__ == "__main__":
     # (only accepts binary values)
     t[np.where(t==4)] = 1
     p[np.where(p==4)] = 1
-<<<<<<< Updated upstream
-=======
+
     #t[np.where(t==0.001)] = 0
     #p[np.where(p==0.001)] = 0
     
     y_scores = clf.decision_function(z)
->>>>>>> Stashed changes
+
 
     # Plot the Precision-Recall curve
     precision, recall, _ = precision_recall_curve(t, y_scores)
@@ -76,8 +75,7 @@ if __name__ == "__main__":
     plt.show()
 
 
-<<<<<<< Updated upstream
-=======
+
 #    # Revert to 0.001s and 4s to plot decision-regions (since plots display class names)
 #    y[np.where(y==1)] = 4
 #    # p[np.where(p==1)] = 4
@@ -94,7 +92,6 @@ if __name__ == "__main__":
 #    plt.savefig('data/svm2000d_decisionRegions.png')
 #    plt.show()
 
->>>>>>> Stashed changes
 
 
 
