@@ -10,24 +10,24 @@ if __name__ == "__main__":
     startTime = datetime.datetime.now()
 
     #Load training data
-    x = np.load('data/train_encoded_array_new.npy')
-    y = np.load('data/train_target_array_new.npy')
+    x = np.load('data/UpdatedFiles/train_encoded_array_new.npy')
+    y = np.load('data/UpdatedFiles/train_target_array_new.npy')
     y = y.astype('int')
     y = y.flatten()
 
     #Load test data
-    z = np.load('data/test_encoded_array_new.npy')
-    t = np.load('data/test_target_array_new.npy')
+    z = np.load('data/UpdatedFiles/test_encoded_array_new.npy')
+    t = np.load('data/UpdatedFiles/test_target_array_new.npy')
     t = t.astype('int')
     t = t.flatten()
 
     #Predict using Naive Bayes Model
     clf = MultinomialNB(alpha=1)
-    nmf = NMF(n_components=300, init='random', random_state=0)
-    x_300d = nmf.fit_transform(x)
-    z_300d = nmf.transform(z)
-    clf.fit(x_300d, y)
-    p = clf.predict(z_300d)
+    nmf = NMF(n_components=500, init='random', random_state=0)
+    x_500d = nmf.fit_transform(x)
+    z_500d = nmf.transform(z)
+    clf.fit(x_500d, y)
+    p = clf.predict(z_500d)
 
     # Compute training time
     endTime = datetime.datetime.now() - startTime
@@ -48,7 +48,7 @@ if __name__ == "__main__":
     t[np.where(t == 4)] = 1
     p[np.where(p == 4)] = 1
     
-    y_scores = clf.predict_proba(z_300d)
+    y_scores = clf.predict_proba(z_500d)
 
     # Plot the Precision-Recall curve
     precision, recall, _ = metrics.precision_recall_curve(t, y_scores[:,1])
@@ -59,6 +59,6 @@ if __name__ == "__main__":
     plt.ylim([0.0, 1.05])
     plt.xlim([0.0, 1.0])
     average_precision = metrics.average_precision_score(t, p)
-    plt.title('Multinomial NB 300d Precision-Recall curve: AP={0:0.2f}'.format(average_precision))
-    plt.savefig('data/MultinomialNB300d_alpha1_precisionRecall.png')
+    plt.title('Multinomial NB 500d Precision-Recall curve: AP={0:0.2f}'.format(average_precision))
+    plt.savefig('data/MultinomialNB500d_alpha1_precisionRecall.png')
     plt.show()
