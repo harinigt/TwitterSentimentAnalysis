@@ -26,6 +26,7 @@ if __name__ == "__main__":
     clf = svm.SVC()
     clf.fit(x, y)
     p = clf.predict(z)
+    y_score = clf.decision_function(z)
 
     # Compute training time
     endTime = datetime.datetime.now() - startTime
@@ -49,7 +50,7 @@ if __name__ == "__main__":
     p[np.where(p==4)] = 1
 
     # Plot the Precision-Recall curve
-    precision, recall, _ = precision_recall_curve(t, p)
+    precision, recall, _ = precision_recall_curve(t, y_score)
     plt.step(recall, precision, color='b', alpha=0.2, where='post')
     plt.fill_between(recall, precision, step='post', alpha=0.2, color='b')
     plt.xlabel('Recall')
@@ -60,8 +61,3 @@ if __name__ == "__main__":
     plt.title('SVM (2000d, classes: 0|4) Precision-Recall curve: AP={0:0.2f}'.format(average_precision))
     plt.savefig('data/svm2000d_with0s_precisionRecall.png')
     plt.show()
-
-
-
-
-
