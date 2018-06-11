@@ -34,7 +34,7 @@ if __name__ == "__main__":
     print("Total time taken to train: ", endTime)
     print("\n")
 
-    print("W2V Bernoulli Naive Bayes with 500 features and alpha = 1")
+    print("W2V Bernoulli Naive Bayes")
 
     # Compute accuracy
     accuracy = metrics.accuracy_score(t, p, normalize=False)
@@ -58,6 +58,6 @@ if __name__ == "__main__":
     plt.ylim([0.0, 1.05])
     plt.xlim([0.0, 1.0])
     average_precision = metrics.average_precision_score(t, p)
-    plt.title('W2V Bernoulli NB 500d Precision-Recall curve: AP={0:0.2f}'.format(average_precision))
-    plt.savefig('data/w2v_BernoulliNB500d_alpha1_precisionRecall.png')
+    plt.title('W2V Bernoulli NB Precision-Recall curve: AP={0:0.2f}'.format(average_precision))
+    plt.savefig('data/w2v_BernoulliNB_alpha1_precisionRecall.png')
     plt.show()

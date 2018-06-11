@@ -98,8 +98,8 @@ if __name__=="__main__":
     # define training data
     train_data_array, test_data_array, train_target_array, test_target_array = convertToNpArray('data/training.1600000.processed.noemoticon.csv',
                                                                                                 'data/testdata.manual.2009.06.14.csv')
-    np.save('data/train_w2v_target_array', train_target_array)
-    np.save('data/test_w2v_target_array', test_target_array)
+    np.save('data/train_w2v_target_array_500d', train_target_array)
+    np.save('data/test_w2v_target_array_500d', test_target_array)
 
     train_data_array = remove_stopwords(train_data_array, 'stopwords.txt')
     train_data_array = remove_punc(train_data_array)
@@ -122,14 +122,14 @@ if __name__=="__main__":
 
 
     # # Train word2vec model
-    # model = Word2Vec(train_tweets, min_count=1)
+    # model = Word2Vec(train_tweets, size=500, min_count=1)
     # words = list(model.wv.vocab)
     #
     # #Save word2vec model to disk
-    # model.save('tweetmodel.bin')
+    # model.save('tweetmodel_500.bin')
 
     #Load model from disk
-    tweet_model = Word2Vec.load('tweetmodel.bin')
+    tweet_model = Word2Vec.load('data/tweetmodel_500.bin')
 
     #Generating Tfidf (term frequencey-inverse document frequency) for the training data matrix
     vectorizer = TfidfVectorizer(analyzer=lambda x: x, min_df=10)
@@ -139,24 +139,24 @@ if __name__=="__main__":
 
 
     #Generating the training tweet average array where each row represents a tweet in the training data
-    train_tweet_average = np.empty((0, 100))
+    train_tweet_average = np.empty((0, 500))
     for tweet in train_tweets:
-        train_tweet_average = np.append(train_tweet_average, buildWordVector(tweet, 100), axis=0)
+        train_tweet_average = np.append(train_tweet_average, buildWordVector(tweet, 500), axis=0)
     train_tweet_average = scale(train_tweet_average)
 
     #Save the processed training array
-    np.save('data/train_w2v_data_array', train_tweet_average)
+    np.save('data/train_w2v_data_array_500d', train_tweet_average)
 
     print("Saved Train data array")
 
     # Generating the test tweet average array where each row represents a tweet in the test data
-    test_tweet_average = np.empty((0, 100))
+    test_tweet_average = np.empty((0, 500))
     for tweet in test_tweets:
-        test_tweet_average = np.append(test_tweet_average, buildWordVector(tweet, 100), axis=0)
+        test_tweet_average = np.append(test_tweet_average, buildWordVector(tweet, 500), axis=0)
     test_tweet_average = scale(test_tweet_average)
 
     #Save the processed test array
-    np.save('data/test_w2v_data_array',test_tweet_average)
+    np.save('data/test_w2v_data_array_500d',test_tweet_average)
 
     print("Saved Test data array")
 
