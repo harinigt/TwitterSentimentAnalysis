@@ -19,21 +19,24 @@ if __name__ == "__main__":
     t = np.load('data/test_w2v_target_array.npy')
     t = t.astype('int')
     t = t.flatten()
-
+    
+    #Remove -ve values and scale all values by smallest -ve value in array
+    x = x + 11.573273289802543
+    z = z + 16.698667840828804
+    
+    
     # Predict using Naive Bayes Model
     clf = MultinomialNB(alpha=1)
-    # nmf = NMF(n_components=500, init='random', random_state=0)
-    # x_500d = nmf.fit_transform(x)
-    # z_500d = nmf.transform(z)
     clf.fit(x, y)
     p = clf.predict(z)
+   
 
     # Compute training time
     endTime = datetime.datetime.now() - startTime
     print("Total time taken to train: ", endTime)
     print("\n")
 
-    print("W2V Multinomial Naive Bayes with 300 features and alpha = 1")
+    print("W2V Multinomial Naive Bayes")
 
     # Compute accuracy
     accuracy = metrics.accuracy_score(t, p, normalize=False)
@@ -58,6 +61,6 @@ if __name__ == "__main__":
     plt.ylim([0.0, 1.05])
     plt.xlim([0.0, 1.0])
     average_precision = metrics.average_precision_score(t, p)
-    plt.title('W2V Multinomial NB 500d Precision-Recall curve: AP={0:0.2f}'.format(average_precision))
-    plt.savefig('data/w2v_MultinomialNB500d_alpha1_precisionRecall.png')
+    plt.title('W2V Multinomial NB Precision-Recall curve: AP={0:0.2f}'.format(average_precision))
+    plt.savefig('data/w2v_MultinomialNB_precisionRecall.png')
     plt.show()
