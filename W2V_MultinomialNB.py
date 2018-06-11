@@ -24,7 +24,7 @@ if __name__ == "__main__":
 
     xmin = np.amin(x)
     zmin = np.amin(z)
-    scale_min = min(xmin, zmin)
+    scale_min = min(xmin, zmin) * -1
 
     x = np.add(x, scale_min)
     z = np.add(z, scale_min)
