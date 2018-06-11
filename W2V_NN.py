@@ -28,7 +28,7 @@ if __name__ == "__main__":
     # print("Shape of t: ", np.shape(t))
 
 
-    learningRate = [0.1]
+    learningRate = [0.001]
     for lr in learningRate:
         clf = MLPClassifier(solver='sgd', hidden_layer_sizes=(30,20), batch_size='auto',
                             learning_rate='adaptive', learning_rate_init=lr, early_stopping=True)
@@ -38,7 +38,7 @@ if __name__ == "__main__":
 
         # predicted = predict_nn(x, y, z, clf)
         print("For learning rate: ", lr)
-        print("Neural Network with 2000 features")
+        print("Neural Network with 100 features")
 
         # Compute accuracy
         accuracy = accuracy_score(t, p, normalize=False)
@@ -63,7 +63,7 @@ if __name__ == "__main__":
         plt.xlim([0.0, 1.0])
         average_precision = average_precision_score(t, p)
         plt.title('Neural Network Precision-Recall curve: AP={0:0.2f}'.format(average_precision))
-        filename = "data/neuralnetwork" + str(lr) + "_precisionRecall.png"
+        filename = "data/w2v_NN_" + str(lr) + "_precisionRecall.png"
         plt.savefig(filename)
 
             # plt.show()

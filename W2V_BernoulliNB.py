@@ -59,5 +59,5 @@ if __name__ == "__main__":
     plt.xlim([0.0, 1.0])
     average_precision = metrics.average_precision_score(t, p)
     plt.title('W2V Bernoulli NB Precision-Recall curve: AP={0:0.2f}'.format(average_precision))
-    plt.savefig('data/w2v_BernoulliNB_alpha1_precisionRecall.png')
+    plt.savefig('data/w2v_BernoulliNB_precisionRecall.png')
     plt.show()

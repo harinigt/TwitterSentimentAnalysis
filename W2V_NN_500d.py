@@ -22,7 +22,7 @@ if __name__ == "__main__":
     t = t.astype('int')
     t = t.flatten()
 
-    learningRate = [0.001]
+    learningRate = [0.1]
     for lr in learningRate:
         clf = MLPClassifier(solver='sgd', hidden_layer_sizes=(30,20), batch_size='auto',
                             learning_rate='adaptive', learning_rate_init=lr, early_stopping=True)

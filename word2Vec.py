@@ -38,11 +38,21 @@ def convertToNpArray(train,test):
     return train_data_array,test_data_array,train_target_array,test_target_array
 
 def create_train_data_subset(train_data):
+    """
+    Creates a balanced subset of the training data
+    :param train_data: Training data array
+    :return: Balanced subset of training data
+    """
     train_data_numpy_array = np.array(train_data)
     train_data_final = train_data_numpy_array[750000:850000,:]
     return train_data_final
 
 def create_test_data_subset(train_data):
+    """
+    Creates a balanced subset of the test data
+    :param train_data: Test data array
+    :return: Balanced subset of test data
+    """
     train_data_numpy_array = np.array(train_data)
     test_data_final = train_data_numpy_array[0:10000, :]
     test_data_final = np.append(test_data_final,train_data_numpy_array[900000:910000,:],axis=0)
@@ -50,9 +60,9 @@ def create_test_data_subset(train_data):
 
 def remove_punc(data_array):
     """
-
-    :param data_array:
-    :return:
+    Removes the punctuation from all the tweets
+    :param data_array: Tweet array to be processed
+    :return: Tweet array with punctuations removed
     """
     translator = str.maketrans(string.punctuation, len(string.punctuation)*' ')
     for i in range(len(data_array)):
@@ -62,10 +72,10 @@ def remove_punc(data_array):
 
 def remove_stopwords(data_array,stopwords_file_path):
     """
-
-    :param data_array:
-    :param stopwords_file_path:
-    :return:
+    This method removes stop words like 'the', 'of', 'it'
+    :param data_array: Tweet array from which the stop words need to be removed
+    :param stopwords_file_path: Stop words file path
+    :return: Tweet array with stop words removed
     """
     stopwords = open(stopwords_file_path,'r')
     stopwords_list = stopwords.read().split('\n')
@@ -79,6 +89,14 @@ def remove_stopwords(data_array,stopwords_file_path):
     return data_array
 
 def buildWordVector(tokens, size):
+    """
+    Obtained from the below source:
+    https://ahmedbesbes.com/sentiment-analysis-on-twitter-using-word2vec-and-keras.html
+    This method builds a vector for each tweet
+    :param tokens: Tokens in a tweet
+    :param size: Size of the vector to be generated for a tweet
+    :return: vector for a tweet
+    """
     vec = np.zeros(size).reshape((1, size))
     count = 0.
     for word in tokens:
@@ -96,15 +114,23 @@ if __name__=="__main__":
     start_time = datetime.datetime.now()
 
     # define training data
-    train_data_array, test_data_array, train_target_array, test_target_array = convertToNpArray('data/training.1600000.processed.noemoticon.csv',
-                                                                                                'data/testdata.manual.2009.06.14.csv')
-    np.save('data/train_w2v_target_array_500d', train_target_array)
-    np.save('data/test_w2v_target_array_500d', test_target_array)
+    train_data_array, test_data_array, train_target_array, test_target_array = convertToNpArray('data/training.1600000.processed.noemoticon.csv','data/testdata.manual.2009.06.14.csv')
 
+    #Save the target arrays
+    np.save('data/train_w2v_target_array_500d', train_target_array)
+    np.save('data/test_w2v_target_array', test_target_array)
+
+    #Preprocessing training data arrays
     train_data_array = remove_stopwords(train_data_array, 'stopwords.txt')
     train_data_array = remove_punc(train_data_array)
     train_data_array = remove_stopwords(train_data_array, 'stopwords.txt')
 
+    #Preprocessing test data arrays
+    test_data_array = remove_stopwords(test_data_array,'stopwords.txt')
+    test_data_array = remove_punc(test_data_array)
+    test_data_array = remove_stopwords(test_data_array,'stopwords.txt')
+
+    #Initializing tokenized train and test lists
     train_tweets = []
     test_tweets = []
 
@@ -121,69 +147,42 @@ if __name__=="__main__":
             test_tweets.append(item)
 
 
-    # # Train word2vec model
+    # Train word2vec model
     # model = Word2Vec(train_tweets, size=500, min_count=1)
     # words = list(model.wv.vocab)
     #
-    # #Save word2vec model to disk
+    #Save word2vec model to disk
     # model.save('tweetmodel_500.bin')
 
     #Load model from disk
-    tweet_model = Word2Vec.load('data/tweetmodel_500.bin')
+    tweet_model = Word2Vec.load('data/tweetmodel.bin')
 
     #Generating Tfidf (term frequencey-inverse document frequency) for the training data matrix
     vectorizer = TfidfVectorizer(analyzer=lambda x: x, min_df=10)
     matrix = vectorizer.fit_transform([x for x in train_tweets])
     tfidf = dict(zip(vectorizer.get_feature_names(), vectorizer.idf_))
 
-
-
-    #Generating the training tweet average array where each row represents a tweet in the training data
+    # Generating the training tweet average array where each row represents a tweet in the training data
     train_tweet_average = np.empty((0, 500))
     for tweet in train_tweets:
         train_tweet_average = np.append(train_tweet_average, buildWordVector(tweet, 500), axis=0)
     train_tweet_average = scale(train_tweet_average)
 
-    #Save the processed training array
+    # Save the processed training array
     np.save('data/train_w2v_data_array_500d', train_tweet_average)
 
     print("Saved Train data array")
 
     # Generating the test tweet average array where each row represents a tweet in the test data
-    test_tweet_average = np.empty((0, 500))
+    test_tweet_average = np.empty((0, 100))
     for tweet in test_tweets:
-        test_tweet_average = np.append(test_tweet_average, buildWordVector(tweet, 500), axis=0)
+        test_tweet_average = np.append(test_tweet_average, buildWordVector(tweet, 100), axis=0)
     test_tweet_average = scale(test_tweet_average)
 
     #Save the processed test array
-    np.save('data/test_w2v_data_array_500d',test_tweet_average)
+    np.save('data/test_w2v_data_array',test_tweet_average)
 
     print("Saved Test data array")
 
     end_time = datetime.datetime.now()- start_time
     print("Time taken to generate the word2vec vectors: ", end_time)
-
-
-
-
-
-
-
-    # print(tfidf)
-    # print(type(matrix))
-    # print(matrix.shape)
-    # print(matrix)
-    # matrix = matrix.todense()
-    # print(matrix)
-    # print(new_model)
-
-    # X = model[model.wv.vocab]
-    # pca = PCA(n_components=2)
-    # result = pca.fit_transform(X)
-    # # create a scatter plot of the projection
-    # pyplot.scatter(result[:, 0], result[:, 1])
-    # words = list(model.wv.vocab)
-    # print(len(words))
-    # for i, word in enumerate(words):
-    # 	pyplot.annotate(word, xy=(result[i, 0], result[i, 1]))
-    # pyplot.show()
