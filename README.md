@@ -40,7 +40,7 @@ In data preprocessing we did the following:
 7. Generated the training data array and test data array by taking a weighted average of each word in the tweet. The weight used is the tf-idf of the word in the training data. 
 
 We implemented three models for classifying tweets: 
-1. Support Vector Machines (Deterministic model): We implemented SVM as they are good for text classification. SVMs do not scale with large dimensions, hence we employed Principal Component Analysis (PCA) for dimensionality reduction before passing it through the SVM.
-2. Naive Bayes Classifier (Probabilistic model): We implemented Naive Bayes Classifier as this treats the features as independent of each other and we wanted to study how this bayesian independence assumptions affect the classification. We implemented Gaussian, Bernoulli and Multinomial Naive Bayes models.
-3. Neural Networks (Deterministic model): We also implemented a neural network and experimented by varying the learning rate and number of hidden layers in the network
+1. `Support Vector Machines` (Deterministic model): We implemented SVM as they are good for text classification. SVMs do not scale with large dimensions, hence we employed Principal Component Analysis (PCA) for dimensionality reduction before passing it through the SVM.
+2. `Naive Bayes Classifier` (Probabilistic model): We implemented Naive Bayes Classifier as this treats the features as independent of each other and we wanted to study how this bayesian independence assumptions affect the classification. We implemented Gaussian, Bernoulli and Multinomial Naive Bayes models.
+3. `Neural Networks` (Deterministic model): We also implemented a neural network and experimented by varying the learning rate and number of hidden layers in the network
 After the classification phase, the performance of the algorithms is evaluated according to different measures like accuracy, confusion matrix, precision-recall curve, etc.
